@@ -37,7 +37,7 @@ def train(args, model, device, train_loader, optimizer, epoch):
         loss.backward()
         optimizer.step()
         if batch_idx % args.log_interval == 0:
-            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(  # /t：横向制表符
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item()))
 
@@ -52,6 +52,7 @@ def test(args, model, device, test_loader):
             output = model(data)
             test_loss += F.nll_loss(output, target, reduction='sum').item()  # sum up batch loss 侯爱民的sum是这一个batch的损失的sum
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
+            # # 先把label变成和pred相同的size，然后看和pred哪些元素相等，相等会返回1，不等返回0
             correct += pred.eq(target.view_as(pred)).sum().item()  # 返回被视作与给定的tensor相同大小的原tensor。 等效于：self.view(tensor.size())
 
     test_loss /= len(test_loader.dataset)
@@ -65,7 +66,7 @@ def main():
     # Training settings
     # 创建 ArgumentParser() 对象
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
-    # 添加参数
+    # 添加参数  metavar:帮助信息中显示的参数名称
     parser.add_argument('--batch-size', type=int, default=64, metavar='N',
                         help='input batch size for training (default: 64)')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
@@ -126,6 +127,8 @@ def main():
         test(args, model, device, test_loader)
 
     if (args.save_model):
+        # model.state_dict() 只保存网络中的参数 (速度快, 占内存少) model_object.load_state_dict(torch.load('params.pkl'))
+        # 如果是torch.save(model, "mnist_cnn.pt")则是保存整个网络 在恢复时不需要重建网络构造  model = torch.load('model.pkl')
         torch.save(model.state_dict(), "mnist_cnn.pt")
 
 
