@@ -33,6 +33,8 @@ def train(args, model, loader, optimizer, epoch, device):
         optimizer.zero_grad()
         output = model(data)
         loss = F.nll_loss(output, label)
+        #print(loss.size())  # torch.Size([])  标量
+        #print(type(loss))  # <class 'torch.Tensor'>
         loss.backward()
         optimizer.step()
         if batch_idx % args.log_interval == 0:
