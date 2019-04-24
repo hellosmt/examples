@@ -33,7 +33,7 @@ def train(args, model, loader, optimizer, epoch, device):
         optimizer.zero_grad()
         output = model(data)
         loss = F.nll_loss(output, label)
-        #print(loss.size())  # torch.Size([])  标量
+        #print(loss.size())  # torch.Size([])  标量  所以后面反向传播时不需要传一个tensor进去
         #print(type(loss))  # <class 'torch.Tensor'>
         loss.backward()
         optimizer.step()
